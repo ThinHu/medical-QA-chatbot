@@ -1,0 +1,19 @@
+// chat.proto
+syntax = "proto3";
+
+package chatbot;
+
+message ChatRequest {
+    string session_id = 1;
+    string message = 2;
+}
+
+// Trả về từng token một để tạo hiệu ứng streaming
+message ChatChunk {
+    string token = 1; 
+}
+
+service LangGraphService {
+    // Lưu ý từ khóa "stream" ở kết quả trả về
+    rpc StreamChat (ChatRequest) returns (stream ChatChunk);
+}

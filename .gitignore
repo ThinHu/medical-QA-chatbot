@@ -1,0 +1,65 @@
+# ==========================================
+# 1. ENV SETUP
+# ==========================================
+.env
+.env.*
+!.env.example
+
+# ==========================================
+# 2. VIRTUAL ENVIRONMENT
+# ==========================================
+venv/
+.venv/
+env/
+.env_venv/
+Lib/
+Scripts/
+Include/
+pyvenv.cfg
+
+# ==========================================
+# 3. PYTHON CACHE & COMPILED FILES
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# ==========================================
+# 4. CHAINLIT & LOCAL DATABASES
+# ==========================================
+.chainlit/chat_files/
+.chainlit/chat_profiles/
+
+*.db
+*.sqlite
+*.sqlite3
+
+# ==========================================
+# 5. LOGS & DEBUGGING
+# ==========================================
+*.log
+logs/
+langchain.log
+
+# ==========================================
+# 6. IDEs & TEXT EDITORS
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+.spyderproject/
+
+# ==========================================
+# 7. OS GENERATED FILES
+# ==========================================
+.DS_Store
+.AppleDouble
+.LSOverride
+
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
