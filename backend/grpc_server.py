@@ -1,4 +1,5 @@
 import os
+os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
 import sys
 import asyncio
 import grpc
@@ -24,8 +25,8 @@ from langchain.retrievers.contextual_compression import ContextualCompressionRet
 from langchain_cohere import CohereRerank
 from langfuse.langchain import CallbackHandler
 
-from src.helper import get_openai_embeddings
-from src.prompt import contextualize_q_prompt, qa_prompt
+from backend.helper import get_openai_embeddings
+from backend.prompt import contextualize_q_prompt, qa_prompt
 
 load_dotenv()
 
@@ -85,10 +86,21 @@ class LangGraphServicer(chat_pb2_grpc.LangGraphServiceServicer):
 
         print(f"Nhận luồng chat mới - Session: {session_id}")
 
+        from backend.vimq_integration import analyze_query
+        vimq_result = analyze_query(user_message)
+        intent = vimq_result.get("intent", "unknown")
+        entities = ", ".join(vimq_result.get("entities", []))
+        if not entities:
+            entities = "Không có"
+
         langfuse_handler = CallbackHandler()
 
         async for chunk in self.chain.astream(
-            {"input": user_message},
+            {
+                "input": user_message,
+                "vimq_intent": intent,
+                "vimq_entities": entities
+            },
             config={
                 "configurable": {"session_id": session_id},
                 "callbacks": [langfuse_handler],

@@ -14,7 +14,8 @@ app = FastAPI()
 async def grpc_stream_generator(session_id: str, message: str):
     """Mở luồng gRPC và yield dữ liệu chuẩn SSE, có bắt lỗi"""
     try:
-        async with grpc.aio.insecure_channel('localhost:50051') as channel:
+        grpc_host = os.environ.get("GRPC_HOST", "localhost")
+        async with grpc.aio.insecure_channel(f'{grpc_host}:50051') as channel:
             stub = chat_pb2_grpc.LangGraphServiceStub(channel)
             request = chat_pb2.ChatRequest(session_id=session_id, message=message)
             

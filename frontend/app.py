@@ -1,7 +1,8 @@
 import chainlit as cl
 import httpx
 
-FASTAPI_URL = "http://localhost:8080/api/chat"
+import os
+FASTAPI_URL = os.environ.get("FASTAPI_URL", "http://localhost:8080/api/chat")
 
 @cl.on_message
 async def on_message(message: cl.Message):
