@@ -2,9 +2,9 @@ import os
 os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
 import sys
 
-# Force UTF-8 output to prevent Windows console UnicodeEncodeError
+# Force UTF-8 output and ensure it doesn't get fully buffered
 if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8')
+    sys.stdout.reconfigure(encoding='utf-8', line_buffering=True)
 
 import asyncio
 import grpc
@@ -41,10 +41,11 @@ if sys.platform == 'win32':
 
 async def build_rag_chain():
     """Hàm khởi tạo toàn bộ bộ não AI và kết nối Database"""
+    print("[Debug] Kết nối Postgres DB...")
     DB_URI = os.environ.get('DB_URI')
     async_connection = await psycopg.AsyncConnection.connect(DB_URI)
     
-    # Tạo bảng chat_history nếu chưa có
+    print("[Debug] Tạo bảng chat_history...")
     await PostgresChatMessageHistory.acreate_tables(async_connection, "chat_history")
 
     def get_session_history(session_id: str):
@@ -54,14 +55,17 @@ async def build_rag_chain():
             async_connection=async_connection
         )
 
-    # Khởi tạo các thành phần LangChain
+    print("[Debug] Khởi tạo Embeddings...")
     embeddings = get_openai_embeddings()
     chat_model = ChatOpenAI(model="gpt-4o-mini", temperature=0.1, streaming=True) 
 
+    print("[Debug] Khởi tạo Pinecone...")
     pc = Pinecone(api_key=os.environ.get('PINECONE_API_KEY'))
+    print("[Debug] Kết nối Pinecone Index...")
     vectorstore = PineconeVectorStore.from_existing_index("medical-chatbot-advanced", embeddings)
     base_retriever = vectorstore.as_retriever(search_kwargs={"k": 15})
 
+    print("[Debug] Khởi tạo Cohere Rerank...")
     cohere_rerank = CohereRerank(cohere_api_key=os.environ.get('COHERE_API_KEY'), model="rerank-multilingual-v3.0", top_n=3)
     compression_retriever = ContextualCompressionRetriever(base_compressor=cohere_rerank, base_retriever=base_retriever)
 
