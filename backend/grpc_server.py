@@ -1,6 +1,11 @@
 import os
 os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
 import sys
+
+# Force UTF-8 output to prevent Windows console UnicodeEncodeError
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout.reconfigure(encoding='utf-8')
+
 import asyncio
 import grpc
 from dotenv import load_dotenv
