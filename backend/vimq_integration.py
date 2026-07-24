@@ -148,8 +148,8 @@ class ViMQInferencer:
                 ent_text = " ".join(words[start:end+1])
                 entities.append(f"{ent_text} ({label})")
         
-        # Determine intent roughly based on entities
-        intent = "severity" if any("SYMPTOM" in e for e in entities) else "triage"
+        # Intent will be classified by LLM based on these entities and user query
+        intent = "PENDING_LLM_CLASSIFICATION"
 
         return {"intent": intent, "entities": entities}
 
