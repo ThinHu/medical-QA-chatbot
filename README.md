@@ -31,6 +31,24 @@ flowchart TD
     C -->|SSE Stream| B
 ```
 
+## Key Features: Intelligent Intent Routing
+Unlike standard RAG systems that use a single generic prompt to answer all medical questions, **BKMed** features a dynamic **Multi-Prompt Routing Architecture** inspired by the ViMQ dataset structure.
+
+1. **Named Entity Recognition (NER)**: 
+   The system utilizes a localized ViMQ model to extract crucial medical entities directly from user input, including:
+   - `SYMPTOM_AND_DISEASE` (Symptoms and diseases)
+   - `DRUG` (Medications)
+   - `MEDICAL_PROCEDURE` (Tests and surgical procedures)
+
+2. **Intent Classification (IC) & Dynamic Routing**:
+   An intelligent LLM Router processes the query alongside the extracted NER tags to classify the user's core intent. Based on this intent, LangChain's `RunnableBranch` redirects the RAG pipeline to one of four highly specialized prompts:
+   - **`TREATMENT`**: Provides actionable first-aid, lifestyle adjustments, and directs the patient to the relevant clinical department.
+   - **`CAUSE`**: Analyzes the root triggers of symptoms or side effects of mentioned drugs.
+   - **`SEVERITY`**: Evaluates the danger level, explicitly listing "Red-Flag" emergency symptoms that require immediate hospital visits.
+   - **`DIAGNOSIS`**: Interprets the medical meaning of symptoms/procedures while strictly disclaiming that it does not replace a doctor's diagnosis.
+
+This IC & NER-driven routing ensures that the chatbot's answers are incredibly sharp, safe, and contextually appropriate for healthcare use cases.
+
 ## Technologies and Frameworks
 
 ### Frontend
@@ -110,3 +128,7 @@ The system uses a batch script to automate the initialization of all three micro
 
 ## License
 Refer to the `LICENSE` file for distribution rights and limitations.
+
+## References
+This project leverages the dataset structure and research insights from the **ViMQ** project:
+- *ViMQ: A Vietnamese Medical Question Dataset for Healthcare AI.* [https://github.com/nttuan8/ViMQ](https://github.com/nttuan8/ViMQ)
